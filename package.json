@@ -1,0 +1,19 @@
+{
+  "name": "packliste",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.2.2",
+    "vite-plugin-pwa": "^1.3.0"
+  },
+  "dependencies": {
+    "alpinejs": "^3.17.2",
+    "firebase": "^12.18.0"
+  }
+}

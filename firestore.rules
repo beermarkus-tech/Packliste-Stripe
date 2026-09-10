@@ -1,0 +1,38 @@
+rules_version = '2';
+
+// Rules for the "packliste" named database in the exercise-tracker Firebase
+// project. Paste this into: Firebase console → Firestore Database →
+// select the "packliste" database → Rules tab → Publish — or deploy via
+// the Firebase CLI (`firebase deploy --only firestore:rules`), now that
+// this repo has firebase.json/.firebaserc wired up.
+//
+// Multi-user app gated by a one-time Stripe payment: every collection
+// lives under users/{uid}/..., and every operation there requires both
+// owning that uid AND having `paid == true` on the users/{uid} profile
+// doc. The profile doc itself can always be read by its owner (so the
+// paywall screen can check status) but can only ever be created — as an
+// unpaid profile — by the client; flipping it to `paid: true` happens
+// exclusively via the Stripe webhook Cloud Function, which uses the
+// Admin SDK and bypasses these rules entirely.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid
+                    && request.resource.data.paid == false;
+      allow update, delete: if false;
+
+      function isPaidOwner() {
+        return request.auth != null && request.auth.uid == uid &&
+          get(/databases/$(database)/documents/users/$(uid)).data.paid == true;
+      }
+
+      match /buckets/{bucketId}      { allow read, write: if isPaidOwner(); }
+      match /catalog/{itemId}        { allow read, write: if isPaidOwner(); }
+      match /categories/{categoryId} { allow read, write: if isPaidOwner(); }
+      match /templates/{templateId}  { allow read, write: if isPaidOwner(); }
+      match /trips/{tripId}          { allow read, write: if isPaidOwner(); }
+    }
+  }
+}
