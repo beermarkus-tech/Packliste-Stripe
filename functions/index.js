@@ -15,9 +15,10 @@ const STRIPE_WEBHOOK_SECRET = defineSecret('STRIPE_WEBHOOK_SECRET');
 
 const app = initializeApp();
 // Same named Firestore database the client uses (see src/lib/firebase.js's
-// DATABASE_ID) — the project's default database belongs to the unrelated
-// exercise-tracker app this project is reused from.
-const db = getFirestore(app, 'packliste');
+// DATABASE_ID) — its own "packliste-stripe" database, isolated from both
+// production Packliste's "packliste" database and the project's default
+// one (the unrelated exercise-tracker app this project is reused from).
+const db = getFirestore(app, 'packliste-stripe');
 
 // One-time payment only (no subscription) — a single Stripe Checkout
 // Session in 'payment' mode, using inline price_data so there's no Stripe

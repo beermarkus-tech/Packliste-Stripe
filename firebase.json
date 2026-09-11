@@ -1,7 +1,7 @@
 {
   "firestore": [
     {
-      "database": "packliste",
+      "database": "packliste-stripe",
       "rules": "firestore.rules"
     }
   ],

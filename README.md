@@ -37,9 +37,9 @@ This is a **staging copy** of Packliste used to develop and test the multi-user/
 
 ## Firebase setup
 
-This app reuses the existing **exercise-tracker** Firebase project, registered as its own Web app within that project, with its own Firestore database named `packliste` (kept separate from the project's default database). Config lives in `src/lib/firebase.js` — Firebase web config values aren't secret, so they're committed directly rather than injected at build time.
+This app reuses the existing **exercise-tracker** Firebase project (same project as production Packliste), registered as its own Web app within that project, with its own Firestore database named `packliste-stripe` — separate from both production's `packliste` database and the project's default database, so this pilot's rules and data can never collide with or overwrite production's. Config lives in `src/lib/firebase.js` — Firebase web config values aren't secret, so they're committed directly rather than injected at build time.
 
-Auth is Google Sign-In (not email/password), open to any Google account — access to actual data is gated by payment, not identity. Every collection lives under `users/{uid}/...`; the security rules enforcing per-user isolation plus the `paid == true` gate live in `firestore.rules`. `firebase.json`/`.firebaserc` are now wired up (scoped explicitly to the `packliste` database, since this project also hosts the unrelated exercise-tracker app on its default database), so rules and Cloud Functions deploy via the Firebase CLI: `firebase deploy --only firestore:rules` / `firebase deploy --only functions`.
+Auth is Google Sign-In (not email/password), open to any Google account — access to actual data is gated by payment, not identity. Every collection lives under `users/{uid}/...`; the security rules enforcing per-user isolation plus the `paid == true` gate live in `firestore.rules`. `firebase.json`/`.firebaserc` are wired up (scoped explicitly to the `packliste-stripe` database), so rules and Cloud Functions deploy via the Firebase CLI: `firebase deploy --only firestore:rules` / `firebase deploy --only functions`. The `packliste-stripe` database itself must be created once in the Firebase console before the first rules deploy (Firestore Database → Create database → set an ID of `packliste-stripe`).
 
 ## Payments (Stripe)
 

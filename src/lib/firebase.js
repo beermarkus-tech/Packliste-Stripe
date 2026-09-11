@@ -19,10 +19,12 @@ const firebaseConfig = {
   appId: '1:372462449667:web:deb792917e23d4f02e0a36',
 };
 
-// Packliste reuses the exercise-tracker Firebase project but keeps its own
-// separate Firestore database ("packliste") rather than the project's
-// default one, so the two apps' data never mixes.
-const DATABASE_ID = 'packliste';
+// This staging app reuses the exercise-tracker Firebase project (same as
+// production Packliste) but keeps its OWN separate named Firestore
+// database ("packliste-stripe"), distinct from both production's
+// "packliste" database and the project's default one — so this pilot's
+// rules/data can never collide with or overwrite production's.
+const DATABASE_ID = 'packliste-stripe';
 
 export const app = initializeApp(firebaseConfig);
 
