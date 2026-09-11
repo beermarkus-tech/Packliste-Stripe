@@ -26,7 +26,13 @@ const firebaseConfig = {
 // rules/data can never collide with or overwrite production's.
 const DATABASE_ID = 'packliste-stripe';
 
-export const app = initializeApp(firebaseConfig);
+// Named explicitly (not the default app) because production Packliste is
+// served from the same origin (beermarkus-tech.github.io, just a different
+// path) and shares this exact Firebase config. Browser storage (including
+// Firebase Auth's session persistence) is scoped by origin, not path, so
+// without distinct app names the two apps would collide and share sign-in
+// sessions.
+export const app = initializeApp(firebaseConfig, 'packliste-stripe');
 
 export const db = initializeFirestore(
   app,

@@ -1,4 +1,8 @@
-const STORAGE_KEY = 'packliste:currentItem';
+// Namespaced (not plain 'packliste:currentItem') because production
+// Packliste is served from the same origin (just a different path) and
+// localStorage is scoped by origin, not path — an unnamespaced key would
+// let the two apps clobber each other's "currently open trip" pointer.
+const STORAGE_KEY = 'packliste-stripe:currentItem';
 
 function load() {
   try {
