@@ -107,6 +107,6 @@ watchAuthState((user) => {
     if (profile === null) {
       ensureProfile(user);
     }
-    renderPaywall(app);
+    renderPaywall(app, { email: user.email });
   });
 });

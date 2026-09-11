@@ -1,12 +1,14 @@
 import Alpine from 'alpinejs';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '../lib/firebase.js';
+import { signOutUser } from '../lib/auth.js';
 
 const PROCESSING_TIMEOUT_MS = 20000;
 
-Alpine.data('paywall', () => ({
+Alpine.data('paywall', (email) => ({
   status: 'idle', // 'idle' | 'redirecting' | 'processing' | 'timeout' | 'cancelled' | 'error'
   errorMessage: '',
+  email,
   _timeoutId: null,
 
   // Stripe's success/cancel redirect lands back here with a query param —
@@ -53,11 +55,16 @@ Alpine.data('paywall', () => ({
   retry() {
     window.location.reload();
   },
+
+  signOut() {
+    if (!confirm('Sign out?')) return;
+    signOutUser();
+  },
 }));
 
-export function renderPaywall(container) {
+export function renderPaywall(container, { email } = {}) {
   container.innerHTML = `
-    <div class="signin-screen" x-data="paywall">
+    <div class="signin-screen" x-data='paywall(${JSON.stringify(email || '')})'>
       <h1>🎒 Packliste</h1>
 
       <template x-if="status === 'processing'">
@@ -80,6 +87,10 @@ export function renderPaywall(container) {
             <span x-show="status !== 'redirecting'">Unlock Packliste — $1.00</span>
             <span x-show="status === 'redirecting'">Redirecting to checkout…</span>
           </button>
+          <p class="screen-placeholder" x-show="email" style="margin-top:24px;font-size:13px;">
+            Signed in as <span x-text="email"></span>.
+            <a href="#" @click.prevent="signOut()">Not you? Sign out</a>
+          </p>
         </div>
       </template>
     </div>
